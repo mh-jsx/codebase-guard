@@ -1,0 +1,15 @@
+.github/**
+.vscode/**
+.gitignore
+src/**
+test/**
+scripts/**
+PUBLISHING.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SUPPORT.md
+tsconfig.json
+package-lock.json
+node_modules/**
+out/test/**
+*.vsix

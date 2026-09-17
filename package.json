@@ -1,0 +1,230 @@
+{
+  "name": "frontend-guard",
+  "displayName": "Codebase Guard",
+  "description": "Local static scanner for suspicious code and risky project configuration. It checks files without running them.",
+  "version": "0.1.7",
+  "private": true,
+  "publisher": "mh-jsx",
+  "author": "mh-jsx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mh-jsx/codebase-guard.git"
+  },
+  "homepage": "https://github.com/mh-jsx/codebase-guard#readme",
+  "bugs": {
+    "url": "https://github.com/mh-jsx/codebase-guard/issues"
+  },
+  "pricing": "Free",
+  "icon": "media/logo.png",
+  "galleryBanner": {
+    "color": "#0B1220",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "security",
+    "malware",
+    "static-analysis",
+    "obfuscation",
+    "vscode",
+    "cursor",
+    "restricted-mode",
+    "php",
+    "laravel",
+    "composer"
+  ],
+  "main": "./out/src/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:frontendGuard.controlCenter",
+    "onView:frontendGuard.findings"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true,
+      "description": "Codebase Guard reads files for static analysis and never runs code from the workspace.",
+      "restrictedConfigurations": [
+        "frontendGuard.enabled",
+        "frontendGuard.automaticScanMode",
+        "frontendGuard.exclude",
+        "frontendGuard.allowlist",
+        "frontendGuard.maxFileSizeBytes",
+        "frontendGuard.maxFiles"
+      ]
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "frontendGuard.scanWorkspace",
+        "title": "Scan Workspace",
+        "category": "Codebase Guard",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "frontendGuard.scanCurrentFile",
+        "title": "Scan Current File",
+        "category": "Codebase Guard"
+      },
+      {
+        "command": "frontendGuard.showFindings",
+        "title": "Show Findings",
+        "category": "Codebase Guard"
+      },
+      {
+        "command": "frontendGuard.exportJson",
+        "title": "Export JSON Report",
+        "category": "Codebase Guard"
+      },
+      {
+        "command": "frontendGuard.openFinding",
+        "title": "Open Finding",
+        "category": "Codebase Guard"
+      },
+      {
+        "command": "frontendGuard.ignoreFinding",
+        "title": "I Reviewed It — Hide This Finding",
+        "category": "Codebase Guard",
+        "icon": "$(check)"
+      },
+      {
+        "command": "frontendGuard.skipFindingSource",
+        "title": "Skip This File or Parent Folder…",
+        "category": "Codebase Guard",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "frontendGuard.configureExclusions",
+        "title": "Manage Skipped Files and Folders",
+        "category": "Codebase Guard"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "frontendGuard",
+          "title": "Codebase Guard",
+          "icon": "media/shield.svg"
+        }
+      ]
+    },
+    "views": {
+      "frontendGuard": [
+        {
+          "id": "frontendGuard.controlCenter",
+          "name": "Control Center",
+          "type": "webview"
+        },
+        {
+          "id": "frontendGuard.findings",
+          "name": "Finding Details"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "frontendGuard.scanWorkspace",
+          "when": "view == frontendGuard.controlCenter",
+          "group": "navigation"
+        },
+        {
+          "command": "frontendGuard.scanWorkspace",
+          "when": "view == frontendGuard.findings",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "frontendGuard.ignoreFinding",
+          "when": "view == frontendGuard.findings && viewItem == frontendGuard.finding",
+          "group": "inline@1"
+        },
+        {
+          "command": "frontendGuard.skipFindingSource",
+          "when": "view == frontendGuard.findings && viewItem == frontendGuard.finding",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Codebase Guard",
+      "properties": {
+        "frontendGuard.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Codebase Guard scanning. Automatic behavior is controlled separately. Workspace values are ignored in Restricted Mode."
+        },
+        "frontendGuard.automaticScanMode": {
+          "type": "string",
+          "enum": [
+            "live",
+            "open",
+            "manual"
+          ],
+          "enumDescriptions": [
+            "Scan when a codebase opens, then recheck only relevant changed files using a bounded queue.",
+            "Scan once when a codebase opens, without monitoring later file changes.",
+            "Never scan automatically. Manual workspace and current-file commands remain available."
+          ],
+          "default": "live",
+          "description": "Controls automatic scanning. Workspace values are ignored in Restricted Mode."
+        },
+        "frontendGuard.exclude": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional global workspace-relative glob patterns to exclude. The Control Center manages separate exclusions for only the opened codebase. Workspace setting values are ignored in Restricted Mode."
+        },
+        "frontendGuard.allowlist": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "Reviewed finding fingerprints to suppress. Prefer User settings; the UI always writes allowlist entries globally. Workspace values are ignored in Restricted Mode."
+        },
+        "frontendGuard.maxFileSizeBytes": {
+          "type": "number",
+          "default": 2097152,
+          "minimum": 65536,
+          "maximum": 16777216,
+          "description": "Maximum file size read into memory. Oversized security-sensitive config files are still reported for review."
+        },
+        "frontendGuard.maxFiles": {
+          "type": "number",
+          "default": 20000,
+          "minimum": 100,
+          "maximum": 100000,
+          "description": "Maximum number of discovered files per workspace scan."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "clean": "node ./scripts/clean.mjs",
+    "compile": "tsc -p tsconfig.json",
+    "test": "npm run compile && node --test out/test/**/*.test.js",
+    "security:audit": "node ./scripts/security-audit.mjs",
+    "prepare:release": "node ./scripts/prepare-release.mjs",
+    "package": "npm run prepare:release && npm run clean && npm run compile && npm run test && npm run security:audit && vsce package --no-dependencies --out ./release/codebase-guard-0.1.7.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.1",
+    "typescript": "^5.7.2"
+  }
+}

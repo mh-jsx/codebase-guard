@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/mh-jsx/codebase-guard/security/advisories/new
+    about: Report a vulnerability without exposing it publicly.
+  - name: Open VSX listing
+    url: https://open-vsx.org/extension/mh-jsx/frontend-guard
+    about: Check the Cursor and Open VSX release listing.
