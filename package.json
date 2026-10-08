@@ -222,7 +222,7 @@
     "package": "npm run prepare:release && npm run clean && npm run compile && npm run test && npm run security:audit && vsce package --no-dependencies --out ./release/codebase-guard-0.1.7.vsix"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
+    "@types/node": "^26.6.4",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.2.1",
     "typescript": "^5.7.2"
